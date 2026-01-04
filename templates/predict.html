@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Heart Disease Prediction</title>
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="{{ url_for('static', filename='css/style.css') }}" rel="stylesheet">
+</head>
+<body>
+
+<div class="container mt-5">
+  <div class="card-ui">
+    <h3>Heart Disease Prediction</h3>
+    <p class="text-muted">Select patient medical details</p>
+
+    <form method="POST" class="grid-form">
+
+      <!-- Age -->
+      <select name="age" class="form-control" required>
+        <option value="">Age</option>
+        {% for i in range(20, 101) %}
+          <option value="{{ i }}">{{ i }}</option>
+        {% endfor %}
+      </select>
+
+      <!-- Sex -->
+      <select name="sex" class="form-control" required>
+        <option value="">Gender</option>
+        <option value="1">Male</option>
+        <option value="0">Female</option>
+      </select>
+
+      <!-- Chest Pain -->
+      <select name="cp" class="form-control" required>
+        <option value="">Chest Pain Type</option>
+        <option value="0">Typical Angina</option>
+        <option value="1">Atypical Angina</option>
+        <option value="2">Non-anginal Pain</option>
+        <option value="3">Asymptomatic</option>
+      </select>
+
+      <!-- Resting BP -->
+      <select name="trestbps" class="form-control" required>
+        <option value="">Resting Blood Pressure</option>
+        {% for i in range(90, 201, 5) %}
+          <option value="{{ i }}">{{ i }} mmHg</option>
+        {% endfor %}
+      </select>
+
+      <!-- Cholesterol -->
+      <select name="chol" class="form-control" required>
+        <option value="">Cholesterol</option>
+        {% for i in range(120, 401, 10) %}
+          <option value="{{ i }}">{{ i }} mg/dL</option>
+        {% endfor %}
+      </select>
+
+      <!-- FBS -->
+      <select name="fbs" class="form-control" required>
+        <option value="">Fasting Blood Sugar > 120</option>
+        <option value="1">Yes</option>
+        <option value="0">No</option>
+      </select>
+
+      <!-- Rest ECG -->
+      <select name="restecg" class="form-control" required>
+        <option value="">Rest ECG</option>
+        <option value="0">Normal</option>
+        <option value="1">ST-T Abnormality</option>
+        <option value="2">LV Hypertrophy</option>
+      </select>
+
+      <!-- Max Heart Rate -->
+      <select name="thalach" class="form-control" required>
+        <option value="">Max Heart Rate</option>
+        {% for i in range(70, 221, 5) %}
+          <option value="{{ i }}">{{ i }} bpm</option>
+        {% endfor %}
+      </select>
+
+      <!-- Exercise Angina -->
+      <select name="exang" class="form-control" required>
+        <option value="">Exercise Induced Angina</option>
+        <option value="1">Yes</option>
+        <option value="0">No</option>
+      </select>
+
+      <!-- Oldpeak -->
+      <select name="oldpeak" class="form-control" required>
+        <option value="">ST Depression (Oldpeak)</option>
+        {% for i in range(0, 61) %}
+          <option value="{{ i/10 }}">{{ i/10 }}</option>
+        {% endfor %}
+      </select>
+
+      <!-- Slope -->
+      <select name="slope" class="form-control" required>
+        <option value="">Slope</option>
+        <option value="0">Upsloping</option>
+        <option value="1">Flat</option>
+        <option value="2">Downsloping</option>
+      </select>
+
+      <!-- Major Vessels -->
+      <select name="ca" class="form-control" required>
+        <option value="">Major Vessels</option>
+        <option value="0">0</option>
+        <option value="1">1</option>
+        <option value="2">2</option>
+        <option value="3">3</option>
+      </select>
+
+      <!-- Thal -->
+      <select name="thal" class="form-control" required>
+        <option value="">Thalassemia</option>
+        <option value="0">Normal</option>
+        <option value="1">Fixed Defect</option>
+        <option value="2">Reversible Defect</option>
+        <option value="3">Severe Defect</option>
+      </select>
+
+      <!-- Submit -->
+      <button class="btn btn-primary primary-btn" style="grid-column: 1 / -1;">
+        Predict Heart Disease Risk
+      </button>
+
+    </form>
+  </div>
+</div>
+
+</body>
+</html>
