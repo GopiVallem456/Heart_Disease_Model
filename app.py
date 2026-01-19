@@ -1,8 +1,10 @@
 from flask import Flask, render_template, request, redirect, url_for, session, flash
 import joblib
-import os
+
 from pymongo import MongoClient
 from datetime import datetime
+import os
+model_path = os.path.join(os.getcwd(), 'model.pkl')
 
 # Google OAuth
 from authlib.integrations.flask_client import OAuth
