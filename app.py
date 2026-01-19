@@ -2,11 +2,12 @@ from flask import Flask, render_template, request, redirect, url_for, session, f
 import joblib
 import os
 from pymongo import MongoClient
+from datetime import datetime
 
 # Google OAuth
 from authlib.integrations.flask_client import OAuth
 
-app = Flask(__name__)
+app = Flask(__name__, template_folder="templates", static_folder="static")
 app.secret_key = "THIS_IS_A_FIXED_SECRET_KEY_12345"
 
 # ------------------ MONGODB CONNECTION ------------------
@@ -22,18 +23,19 @@ users_collection.create_index("username", unique=True)
 predictions_collection = db["predictions"]
 
 # ------------------ ML MODEL ------------------
-model = joblib.load("heart_disease_model.pkl")
+# Load model from the correct path for Railway deployment
+model_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "heart_disease_model.pkl")
+if os.path.exists(model_path):
+    model = joblib.load(model_path)
+else:
+    # Fallback: try to load from current directory
+    try:
+        model = joblib.load("heart_disease_model.pkl")
+    except FileNotFoundError:
+        print(f"WARNING: Model file not found at {model_path}")
+        model = None
 
 # ------------------ GOOGLE OAUTH CONFIG ------------------
-
-from authlib.integrations.flask_client import OAuth
-
-# ✅ create oauth object FIRST
-oauth = OAuth(app)
-
-# ✅ then register google
-# ------------------ GOOGLE OAUTH CONFIG ------------------
-
 oauth = OAuth(app)
 
 google = oauth.register(
@@ -137,6 +139,10 @@ def predict():
         return redirect(url_for("login"))
 
     if request.method == "POST":
+        if model is None:
+            flash("ML model is not available. Please try again later.", "danger")
+            return render_template("predict.html")
+        
         field_names = [
             "age", "sex", "cp", "trestbps", "chol", "fbs", "restecg",
             "thalach", "exang", "oldpeak", "slope", "ca", "thal"
@@ -146,7 +152,6 @@ def predict():
         prediction = model.predict([features])[0]
         
         # Save prediction to database
-        from datetime import datetime
         prediction_data = {
             "username": session["user"],
             "timestamp": datetime.now(),
