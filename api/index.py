@@ -23,7 +23,18 @@ users_collection.create_index("username", unique=True)
 predictions_collection = db["predictions"]
 
 # ------------------ ML MODEL ------------------
-model = joblib.load("heart_disease_model.pkl")
+# Load model from the correct path for Vercel deployment
+import sys
+model_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "heart_disease_model.pkl")
+if os.path.exists(model_path):
+    model = joblib.load(model_path)
+else:
+    # Fallback: try to load from current directory
+    try:
+        model = joblib.load("heart_disease_model.pkl")
+    except FileNotFoundError:
+        print(f"WARNING: Model file not found at {model_path}")
+        model = None
 
 # ------------------ GOOGLE OAUTH CONFIG ------------------
 oauth = OAuth(app)
@@ -123,6 +134,10 @@ def predict():
         return redirect(url_for("login"))
 
     if request.method == "POST":
+        if model is None:
+            flash("ML model is not available. Please try again later.", "danger")
+            return render_template("predict.html")
+        
         field_names = [
             "age", "sex", "cp", "trestbps", "chol", "fbs", "restecg",
             "thalach", "exang", "oldpeak", "slope", "ca", "thal"
@@ -229,3 +244,9 @@ def profile():
         high_risk_count=high_risk_count,
         low_risk_count=low_risk_count
     )
+
+
+# Export app for Vercel serverless function
+if __name__ == "__main__":
+    app.run(debug=True)
+
